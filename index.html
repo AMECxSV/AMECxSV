@@ -45,7 +45,7 @@
     }
 
     .wrap {
-      width: min(1160px, calc(100% - 40px));
+      width: min(980px, calc(100% - 40px));
       margin-inline: auto;
     }
 
@@ -181,6 +181,8 @@
 
     .figure {
       overflow: hidden;
+      width: 100%;
+      margin-inline: auto;
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: var(--paper);
@@ -191,6 +193,21 @@
       display: block;
       width: 100%;
       height: auto;
+    }
+
+    .method-figure {
+      max-width: 980px;
+    }
+
+    .chart-figure {
+      max-width: 780px;
+      margin-bottom: 24px;
+    }
+
+    .chart-figure img {
+      height: 500px;
+      padding: 24px;
+      object-fit: contain;
     }
 
     .caption {
@@ -232,21 +249,31 @@
 
     .table-wrap {
       overflow-x: auto;
+      max-width: 980px;
+      margin-inline: auto;
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: var(--paper);
       box-shadow: var(--shadow);
     }
 
+    .table-note {
+      max-width: 980px;
+      margin: 12px auto 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 700px;
+      min-width: 900px;
+      font-size: 0.9rem;
     }
 
     th,
     td {
-      padding: 15px 18px;
+      padding: 11px 14px;
       border-bottom: 1px solid var(--line);
       text-align: left;
       white-space: nowrap;
@@ -269,6 +296,25 @@
       font-weight: 700;
     }
 
+    tbody tr.baseline {
+      background: #fff8e9;
+      font-weight: 700;
+    }
+
+    tbody tr.group-start td {
+      border-top: 2px solid #cbd5e5;
+    }
+
+    .fixed-note {
+      max-width: 900px;
+      margin: 0 0 24px;
+      padding: 15px 18px;
+      border-left: 4px solid var(--blue);
+      border-radius: 0 10px 10px 0;
+      color: var(--blue-dark);
+      background: var(--blue-soft);
+    }
+
     .external-results {
       margin-top: 52px;
     }
@@ -283,7 +329,7 @@
       margin-bottom: 24px;
     }
 
-    .pdf-card {
+    .chart-card {
       overflow: hidden;
       border: 1px solid var(--line);
       border-radius: var(--radius);
@@ -291,25 +337,28 @@
       box-shadow: var(--shadow);
     }
 
-    .pdf-card > img {
+    .chart-card > img {
       display: block;
       width: 100%;
-      height: auto;
+      height: 500px;
+      padding: 24px;
+      object-fit: contain;
       background: #fff;
     }
 
-    .pdf-card .body {
+    .chart-card .body {
       padding: 19px 20px 21px;
       border-top: 1px solid var(--line);
     }
 
-    .pdf-card .body a {
+    .chart-card .body a {
       color: var(--blue);
       font-size: 0.88rem;
       font-weight: 750;
     }
 
     .result-figure {
+      width: 100%;
       max-width: 780px;
       margin-inline: auto;
     }
@@ -356,6 +405,21 @@
       font-size: 0.85rem;
     }
 
+    .footer-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 18px;
+      color: var(--blue);
+      font-weight: 700;
+    }
+
     @media (max-width: 900px) {
       .stats,
       .cards {
@@ -369,7 +433,7 @@
 
     @media (max-width: 620px) {
       .wrap {
-        width: min(100% - 26px, 1160px);
+        width: min(100% - 26px, 980px);
       }
 
       nav .wrap {
@@ -397,6 +461,12 @@
         min-height: 0;
       }
 
+      .chart-figure img,
+      .chart-card > img {
+        height: auto;
+        padding: 12px;
+      }
+
     }
   </style>
 </head>
@@ -409,6 +479,7 @@
         <a href="#results">Results</a>
         <a href="#analysis">Analysis</a>
         <a href="#code">Code</a>
+        <a href="https://huggingface.co/datasets/AMECxSV/AMECxSV">Data</a>
       </div>
     </div>
   </nav>
@@ -421,11 +492,12 @@
           AMECxSV combines scores from six fixed speaker encoders with language-match and
           duration-reliability context. A compact MLP produces a calibrated posterior,
           while a confidence gate supports selective abstention when automatic decisions
-          are unreliable.
+          are unreliable. The work targets score calibration and fusion, not encoder training.
         </p>
         <div class="hero-actions">
           <a class="button primary" href="#results">View results</a>
-          <a class="button" href="#code">Reproduce experiments</a>
+          <a class="button" href="https://github.com/AMECxSV/AMECxSV">GitHub</a>
+          <a class="button" href="https://huggingface.co/datasets/AMECxSV/AMECxSV">Dataset</a>
         </div>
       </div>
     </header>
@@ -440,7 +512,13 @@
             Scores and metadata share one flat input vector; there are no separate branches.
           </p>
         </div>
-        <figure class="figure">
+        <p class="fixed-note">
+          <strong>Scope of the claim:</strong> all encoders are frozen, and absolute score
+          performance remains encoder-dependent. AMECxSV improves calibration and fusion
+          of fixed scores; it does not introduce a stronger encoder or claim the highest
+          raw ASV score across all systems.
+        </p>
+        <figure class="figure method-figure">
           <img src="pages/AMEC.drawio.png" alt="AMECxSV architecture from enrollment and test utterances to calibrated posterior and abstention">
           <figcaption class="caption">
             Six frozen encoders provide score evidence. Language match and duration reliability
@@ -455,32 +533,33 @@
         <div class="section-head">
           <h2>Main results</h2>
           <p>
-            The metadata-aware C10 system improves over score-only fusion at full coverage.
-            Selective abstention further reduces error on the accepted subset and must be
-            interpreted together with coverage.
+            C0-C5 are the single-encoder baselines: C0 uses the raw score, while C1-C5
+            evaluate classical and condition-aware calibration on the same fixed score
+            source. C8 is the six-score fusion control. C10 adds metadata as calibration
+            context, and C10-3 adds selective abstention.
           </p>
         </div>
 
         <div class="stats" aria-label="Key results">
           <article class="stat">
-            <small>Full-coverage EER</small>
+            <small>C0 raw baseline EER</small>
+            <strong>3.60%</strong>
+            <small>Single fixed encoder, no calibration</small>
+          </article>
+          <article class="stat">
+            <small>C1 calibrated Cllr</small>
+            <strong>0.14</strong>
+            <small>Down from 0.90 for the C0 raw score</small>
+          </article>
+          <article class="stat">
+            <small>C8 score-fusion EER</small>
+            <strong>2.13%</strong>
+            <small>Six frozen encoder scores</small>
+          </article>
+          <article class="stat">
+            <small>C10 metadata-aware EER</small>
             <strong>1.85%</strong>
-            <small>C10-2, down from 2.13% for C8-2</small>
-          </article>
-          <article class="stat">
-            <small>Full-coverage Cllr</small>
-            <strong>0.08</strong>
-            <small>C10-2, down from 0.09 for C8-2</small>
-          </article>
-          <article class="stat">
-            <small>Accepted-set EER</small>
-            <strong>0.10%</strong>
-            <small>C10-3 at approximately 0.80 coverage</small>
-          </article>
-          <article class="stat">
-            <small>Dual external scores</small>
-            <strong>0.427%</strong>
-            <small>Full-coverage EER with joint calibration</small>
+            <small>Six scores plus calibration context</small>
           </article>
         </div>
 
@@ -498,7 +577,61 @@
               </tr>
             </thead>
             <tbody>
+              <tr class="baseline">
+                <td>C0</td>
+                <td>Raw single score</td>
+                <td>1.00</td>
+                <td>3.60 ± 0.04%</td>
+                <td>0.90 ± 0.00</td>
+                <td>1.00 ± 0.00</td>
+                <td>1.00 ± 0.00</td>
+              </tr>
               <tr>
+                <td>C1</td>
+                <td>Logistic calibration</td>
+                <td>1.00</td>
+                <td>3.60 ± 0.04%</td>
+                <td>0.14 ± 0.00</td>
+                <td>0.73 ± 0.00</td>
+                <td>0.42 ± 0.01</td>
+              </tr>
+              <tr>
+                <td>C2</td>
+                <td>PAV calibration</td>
+                <td>1.00</td>
+                <td>3.60 ± 0.04%</td>
+                <td>0.14 ± 0.00</td>
+                <td>0.97 ± 0.00</td>
+                <td>0.38 ± 0.01</td>
+              </tr>
+              <tr>
+                <td>C3</td>
+                <td>Score + QMF</td>
+                <td>1.00</td>
+                <td>3.58 ± 0.04%</td>
+                <td>0.14 ± 0.00</td>
+                <td>1.00 ± 0.00</td>
+                <td>0.37 ± 0.01</td>
+              </tr>
+              <tr>
+                <td>C4</td>
+                <td>Score + language</td>
+                <td>1.00</td>
+                <td>3.52 ± 0.04%</td>
+                <td>0.14 ± 0.00</td>
+                <td>0.77 ± 0.01</td>
+                <td>0.35 ± 0.01</td>
+              </tr>
+              <tr>
+                <td>C5</td>
+                <td>Score + reliability</td>
+                <td>0.88</td>
+                <td>3.84 ± 0.04%</td>
+                <td>0.15 ± 0.00</td>
+                <td>0.99 ± 0.00</td>
+                <td>0.35 ± 0.01</td>
+              </tr>
+              <tr class="group-start">
                 <td>C8-2</td>
                 <td>Multi-score</td>
                 <td>1.00</td>
@@ -516,7 +649,7 @@
                 <td>0.59</td>
                 <td>0.21</td>
               </tr>
-              <tr class="highlight">
+              <tr class="highlight group-start">
                 <td>C10-2</td>
                 <td>Multi-score + metadata</td>
                 <td>1.00</td>
@@ -537,6 +670,10 @@
             </tbody>
           </table>
         </div>
+        <p class="table-note">
+          These rows compare score calibration and fusion under fixed encoder inputs;
+          they are not an encoder leaderboard.
+        </p>
 
         <div class="external-results">
           <h3>External-system results</h3>
@@ -560,7 +697,7 @@
             </article>
           </div>
 
-          <article class="pdf-card result-figure">
+          <article class="chart-card result-figure">
             <img src="pages/external_tidyvoice_baselines.png" alt="EER and Cllr comparison for official TidyVoice, LI-MSV, and fused external systems">
             <div class="body">
               <h3>Official TidyVoice and LI-MSV</h3>
@@ -582,14 +719,14 @@
           </p>
         </div>
 
-        <figure class="figure" style="margin-bottom: 24px">
+        <figure class="figure chart-figure">
           <img src="pages/c10_coverage_curve.png" alt="Coverage-aware C10 curve showing covered accuracy, accepted EER, and accepted Cllr">
           <figcaption class="caption">
             Lower coverage retains higher-confidence trials, reducing accepted-set EER and Cllr.
           </figcaption>
         </figure>
 
-        <article class="pdf-card result-figure">
+        <article class="chart-card result-figure">
           <img src="pages/c9_six_embedding_eer.png" alt="C9 accepted EER comparison across six speaker embedding front ends">
           <div class="body">
             <h3>C9 side validation</h3>
@@ -630,13 +767,22 @@
 python run.py --list
 python run.py --main
 python run.py --followup</code></pre>
+
+        <div class="hero-actions">
+          <a class="button primary" href="https://github.com/AMECxSV/AMECxSV">Browse code</a>
+          <a class="button" href="https://huggingface.co/datasets/AMECxSV/AMECxSV">Download data</a>
+        </div>
       </div>
     </section>
   </main>
 
   <footer>
-    <div class="wrap">
-      AMECxSV — Metadata-aware calibration for cross-lingual speaker verification.
+    <div class="wrap footer-row">
+      <span>AMECxSV — Score calibration for cross-lingual speaker verification.</span>
+      <span class="footer-links">
+        <a href="https://github.com/AMECxSV/AMECxSV">GitHub</a>
+        <a href="https://huggingface.co/datasets/AMECxSV/AMECxSV">Hugging Face</a>
+      </span>
     </div>
   </footer>
 </body>
