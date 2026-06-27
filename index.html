@@ -269,11 +269,18 @@
       font-weight: 700;
     }
 
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 22px;
-      align-items: start;
+    .external-results {
+      margin-top: 52px;
+    }
+
+    .external-results h3 {
+      margin-bottom: 4px;
+      font-size: 1.65rem;
+    }
+
+    .external-stats {
+      grid-template-columns: repeat(3, 1fr);
+      margin-bottom: 24px;
     }
 
     .pdf-card {
@@ -300,6 +307,11 @@
       color: var(--blue);
       font-size: 0.88rem;
       font-weight: 750;
+    }
+
+    .result-figure {
+      max-width: 780px;
+      margin-inline: auto;
     }
 
     .cards {
@@ -350,7 +362,7 @@
         grid-template-columns: repeat(2, 1fr);
       }
 
-      .grid-2 {
+      .external-stats {
         grid-template-columns: 1fr;
       }
     }
@@ -525,16 +537,48 @@
             </tbody>
           </table>
         </div>
+
+        <div class="external-results">
+          <h3>External-system results</h3>
+          <p class="note">The same calibration back end improves both external systems and their score fusion.</p>
+
+          <div class="stats external-stats" aria-label="External-system results">
+            <article class="stat">
+              <small>Official TidyVoice EER</small>
+              <strong>3.155% → 2.416%</strong>
+              <small>Raw score to metadata-aware calibration</small>
+            </article>
+            <article class="stat">
+              <small>LI-MSV EER</small>
+              <strong>0.640% → 0.433%</strong>
+              <small>Raw score to metadata-aware calibration</small>
+            </article>
+            <article class="stat">
+              <small>Dual-score fusion</small>
+              <strong>0.427% → 0.038%</strong>
+              <small>Full coverage to accepted set at 0.794 coverage</small>
+            </article>
+          </div>
+
+          <article class="pdf-card result-figure">
+            <img src="pages/external_tidyvoice_baselines.png" alt="EER and Cllr comparison for official TidyVoice, LI-MSV, and fused external systems">
+            <div class="body">
+              <h3>Official TidyVoice and LI-MSV</h3>
+              <p class="note">EER and Cllr under raw scoring, metadata-aware calibration, and abstention.</p>
+              <a href="pages/external_tidyvoice_baselines.png">Open figure</a>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
 
     <section id="analysis">
       <div class="wrap">
         <div class="section-head">
-          <h2>Selective and external analysis</h2>
+          <h2>Selective and side analysis</h2>
           <p>
             The repository includes coverage-aware evaluation, a separate multi-enrollment
-            side validation, and matched experiments on two external systems.
+            side validation, and confidence-based abstention analysis.
           </p>
         </div>
 
@@ -545,25 +589,14 @@
           </figcaption>
         </figure>
 
-        <div class="grid-2">
-          <article class="pdf-card">
-            <img src="pages/external_tidyvoice_baselines.png" alt="EER and Cllr comparison for official TidyVoice, LI-MSV, and fused external systems">
-            <div class="body">
-              <h3>External baselines</h3>
-              <p class="note">Official TidyVoice, LI-MSV, and dual-score calibration results.</p>
-              <a href="pages/external_tidyvoice_baselines.png">Open figure</a>
-            </div>
-          </article>
-
-          <article class="pdf-card">
-            <img src="pages/c9_six_embedding_eer.png" alt="C9 accepted EER comparison across six speaker embedding front ends">
-            <div class="body">
-              <h3>C9 side validation</h3>
-              <p class="note">Accepted EER across six embedding front ends under a separate protocol.</p>
-              <a href="pages/c9_six_embedding_eer.png">Open figure</a>
-            </div>
-          </article>
-        </div>
+        <article class="pdf-card result-figure">
+          <img src="pages/c9_six_embedding_eer.png" alt="C9 accepted EER comparison across six speaker embedding front ends">
+          <div class="body">
+            <h3>C9 side validation</h3>
+            <p class="note">Accepted EER across six embedding front ends under a separate protocol.</p>
+            <a href="pages/c9_six_embedding_eer.png">Open figure</a>
+          </div>
+        </article>
       </div>
     </section>
 
