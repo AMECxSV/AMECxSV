@@ -199,17 +199,6 @@
       max-width: 980px;
     }
 
-    .chart-figure {
-      max-width: 780px;
-      margin-bottom: 24px;
-    }
-
-    .chart-figure img {
-      height: 500px;
-      padding: 24px;
-      object-fit: contain;
-    }
-
     .caption {
       padding: 15px 18px 17px;
       border-top: 1px solid var(--line);
@@ -340,13 +329,14 @@
     .chart-card > img {
       display: block;
       width: 100%;
-      height: 500px;
-      padding: 24px;
+      height: 320px;
+      padding: 16px;
       object-fit: contain;
       background: #fff;
     }
 
     .chart-card .body {
+      min-height: 132px;
       padding: 19px 20px 21px;
       border-top: 1px solid var(--line);
     }
@@ -357,10 +347,17 @@
       font-weight: 750;
     }
 
-    .result-figure {
-      width: 100%;
-      max-width: 780px;
-      margin-inline: auto;
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+      align-items: start;
+    }
+
+    .chart-grid > .chart-card:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+      width: calc(50% - 10px);
+      justify-self: center;
     }
 
     .cards {
@@ -461,7 +458,15 @@
         min-height: 0;
       }
 
-      .chart-figure img,
+      .chart-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-grid > .chart-card:last-child:nth-child(odd) {
+        grid-column: auto;
+        width: 100%;
+      }
+
       .chart-card > img {
         height: auto;
         padding: 12px;
@@ -696,15 +701,6 @@
               <small>Full coverage to accepted set at 0.794 coverage</small>
             </article>
           </div>
-
-          <article class="chart-card result-figure">
-            <img src="pages/external_tidyvoice_baselines.png" alt="EER and Cllr comparison for official TidyVoice, LI-MSV, and fused external systems">
-            <div class="body">
-              <h3>Official TidyVoice and LI-MSV</h3>
-              <p class="note">EER and Cllr under raw scoring, metadata-aware calibration, and abstention.</p>
-              <a href="pages/external_tidyvoice_baselines.png">Open figure</a>
-            </div>
-          </article>
         </div>
       </div>
     </section>
@@ -719,21 +715,34 @@
           </p>
         </div>
 
-        <figure class="figure chart-figure">
-          <img src="pages/c10_coverage_curve.png" alt="Coverage-aware C10 curve showing covered accuracy, accepted EER, and accepted Cllr">
-          <figcaption class="caption">
-            Lower coverage retains higher-confidence trials, reducing accepted-set EER and Cllr.
-          </figcaption>
-        </figure>
+        <div class="chart-grid">
+          <article class="chart-card">
+            <img src="pages/external_tidyvoice_baselines.png" alt="EER and Cllr comparison for official TidyVoice, LI-MSV, and fused external systems">
+            <div class="body">
+              <h3>Official TidyVoice and LI-MSV</h3>
+              <p class="note">EER and Cllr under raw scoring, metadata-aware calibration, and abstention.</p>
+              <a href="pages/external_tidyvoice_baselines.png">Open figure</a>
+            </div>
+          </article>
 
-        <article class="chart-card result-figure">
-          <img src="pages/c9_six_embedding_eer.png" alt="C9 accepted EER comparison across six speaker embedding front ends">
-          <div class="body">
-            <h3>C9 side validation</h3>
-            <p class="note">Accepted EER across six embedding front ends under a separate protocol.</p>
-            <a href="pages/c9_six_embedding_eer.png">Open figure</a>
-          </div>
-        </article>
+          <article class="chart-card">
+            <img src="pages/c10_coverage_curve.png" alt="Coverage-aware C10 curve showing covered accuracy, accepted EER, and accepted Cllr">
+            <div class="body">
+              <h3>Coverage-aware abstention</h3>
+              <p class="note">Lower coverage retains higher-confidence trials and reduces accepted-set error.</p>
+              <a href="pages/c10_coverage_curve.png">Open figure</a>
+            </div>
+          </article>
+
+          <article class="chart-card">
+            <img src="pages/c9_six_embedding_eer.png" alt="C9 accepted EER comparison across six speaker embedding front ends">
+            <div class="body">
+              <h3>C9 side validation</h3>
+              <p class="note">Accepted EER across six embedding front ends under a separate protocol.</p>
+              <a href="pages/c9_six_embedding_eer.png">Open figure</a>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
 
