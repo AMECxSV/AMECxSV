@@ -1,0 +1,40 @@
+# Data and generated artifacts
+data/
+datasets/
+protocols/*.csv
+protocols/*.csv.gz
+outputs/
+weights/
+checkpoints/
+external/checkpoints/
+external/repos/
+external/outputs/
+similarity/outputs/
+*.csv
+*.parquet
+*.pq
+*.npy
+*.npz
+*.pt
+*.pth
+*.ckpt
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local logs and environment files
+*.log
+.env
+.env.*

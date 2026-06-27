@@ -1,0 +1,28 @@
+paths:
+  TIDYVOICE_TRIAL_TABLE: protocols/tidyvoice_dev.csv
+  TIDYVOICE_CALIBRATION_SPLIT: protocols/tidyvoice_calibration.csv
+  TIDYVOICE_TEST_SPLIT: protocols/tidyvoice_test.csv
+  TIDYVOICE_SPEAKER_SPLIT_MANIFEST: protocols/tidyvoice_speaker_split_manifest.csv
+  TIDYVOICE_AUDIO_ROOT: data/tidyvoice/TidyVoiceX_ASV/TidyVoiceX_Dev
+  CHECKPOINT_ROOT: external/checkpoints
+  OUTPUT_ROOT: external/outputs
+  EXISTING_SCORE_ROOT: scores
+
+external_systems:
+  official_tidyvoice_simam_resnet34:
+    source_system: official_tidyvoice_simam_resnet34
+    checkpoint_path: external/checkpoints/official_tidyvoice_simam_resnet34
+    expected_score_path: external/outputs/official_tidyvoice_simam_resnet34_scores.parquet
+  limsv_w2vbert:
+    source_system: limsv_w2vbert
+    checkpoint_path: external/checkpoints/limsv_w2vbert
+    expected_score_path: external/outputs/limsv_w2vbert_grl_scores.parquet
+
+settings:
+  default_dataset: tidyvoice_asv
+  calibration_split_name: calibration
+  test_split_name: test
+  metric_priors:
+    p001: 0.001
+    p01: 0.01
+  default_score_is_llr: false
