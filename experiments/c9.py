@@ -24,7 +24,7 @@ from common import (
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-C9_DATASET_DIR = PROJECT_ROOT / "data" / "c9"
+C9_DATASET_DIR = PROJECT_ROOT / "dataset" / "c9"
 C9_DATASET_NAME = os.environ.get("AMECXSV_C9_DATASET_NAME", "voxceleb1b")
 C9_DATASET_PREFIX = os.environ.get("AMECXSV_C9_PREFIX", "voxceleb1b_c9")
 FEATURES_PARQUET = Path(

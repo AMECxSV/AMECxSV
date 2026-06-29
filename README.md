@@ -10,13 +10,13 @@ All speaker encoders are frozen, and absolute score performance remains
 encoder-dependent. AMECxSV studies calibration and fusion of fixed encoder
 scores; it does not introduce a new encoder or claim the highest raw ASV score.
 
-C0--C5 are single-encoder baselines covering raw scoring, classical calibration,
-and condition-aware calibration. C8 is the score-only fusion control, and C10
-adds metadata as calibration context.
+The repository includes single-score baselines, MultiScore-FC/ABS controls,
+AMEC-FC/ABS, strict architecture-matched score-only and metadata controls,
+speaker-clustered bootstrap analysis, and external fixed-score experiments.
 
 ## Structure
 
-- `experiments/`: C0--C5, C8, C9, C10, ablations, and controls
+- `experiments/`: internal baselines, AMEC, ablations, controls, and abstention
 - `data_prep/`: protocol and score preparation
 - `embedding_extraction/`: fixed-encoder wrappers
 - `external/`: Official TidyVoice and LI-MSV experiments
@@ -44,5 +44,13 @@ export AMECXSV_FOLLOWUP_TABLE=dataset/tidyvoice_trial_metadata.parquet
 python run.py --list
 python run.py --main
 python run.py --followup
+python run.py matched_score_control
 python run.py c9
+```
+
+External heads support matched score-only and score-plus-metadata inputs:
+
+```bash
+python external/train_amec_head_external.py ... --feature-set score_only
+python external/train_amec_head_external.py ... --feature-set score_plus_metadata
 ```

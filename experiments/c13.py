@@ -43,7 +43,7 @@ from common import (
 FOLLOWUP_TABLE = Path(
     os.environ.get(
         "AMECXSV_FOLLOWUP_TABLE",
-        PROJECT_ROOT / "data" / "tidyvoice_trial_metadata.parquet",
+        PROJECT_ROOT / "dataset" / "tidyvoice_trial_metadata.parquet",
     )
 )
 LANGUAGE_OUTPUT = BASELINE_DIR / "tidyvoice_c13_language_analysis.csv"

@@ -538,8 +538,9 @@
           <h2>Method overview</h2>
           <p>
             Trial-level cosine scores and compact calibration context are concatenated,
-            normalized, deterministically expanded, and passed to a two-hidden-layer MLP.
-            Scores and metadata share one flat input vector; there are no separate branches.
+            deterministically expanded from 10 raw inputs to 112 features, normalized,
+            and passed to a two-hidden-layer width-24 MLP. Scores and metadata share one
+            flat input vector; there are no separate branches, residual paths, or attention.
           </p>
         </div>
         <p class="fixed-note">
@@ -563,31 +564,30 @@
         <div class="section-head">
           <h2>Main results</h2>
           <p>
-            C0-C5 are the single-encoder baselines: C0 uses the raw score, while C1-C5
-            evaluate classical and condition-aware calibration on the same fixed score
-            source. C8 is the six-score fusion control. C10 adds metadata as calibration
-            context, and C10-3 adds selective abstention.
+            Single-score systems establish raw, classical-calibration, and
+            condition-aware baselines. MultiScore-FC/ABS isolate score fusion,
+            while AMEC-FC/ABS add aligned language and duration context.
           </p>
         </div>
 
         <div class="stats" aria-label="Key results">
           <article class="stat">
-            <small>C0 raw baseline EER</small>
+            <small>Raw Single-Score EER</small>
             <strong>3.60%</strong>
             <small>Single fixed encoder, no calibration</small>
           </article>
           <article class="stat">
-            <small>C1 calibrated Cllr</small>
+            <small>Global calibration Cllr</small>
             <strong>0.14</strong>
-            <small>Down from 0.90 for the C0 raw score</small>
+            <small>Down from 0.895 for the raw score</small>
           </article>
           <article class="stat">
-            <small>C8 score-fusion EER</small>
-            <strong>2.13%</strong>
+            <small>MultiScore-FC EER</small>
+            <strong>2.15%</strong>
             <small>Six frozen encoder scores</small>
           </article>
           <article class="stat">
-            <small>C10 metadata-aware EER</small>
+            <small>AMEC-FC EER</small>
             <strong>1.85%</strong>
             <small>Six scores plus calibration context</small>
           </article>
@@ -608,94 +608,94 @@
             </thead>
             <tbody>
               <tr class="baseline">
-                <td>C0</td>
-                <td>Raw single score</td>
-                <td>1.00</td>
+                <td>Raw Single-Score</td>
+                <td>Raw score</td>
+                <td>1.000 ± 0.000</td>
                 <td>3.60 ± 0.04%</td>
-                <td>0.90 ± 0.00</td>
-                <td>1.00 ± 0.00</td>
-                <td>1.00 ± 0.00</td>
+                <td>0.895 ± 0.000</td>
+                <td>1.000 ± 0.000</td>
+                <td>1.000 ± 0.000</td>
               </tr>
               <tr>
-                <td>C1</td>
-                <td>Logistic calibration</td>
-                <td>1.00</td>
+                <td>Global Logistic</td>
+                <td>Single score</td>
+                <td>1.000 ± 0.000</td>
                 <td>3.60 ± 0.04%</td>
-                <td>0.14 ± 0.00</td>
-                <td>0.73 ± 0.00</td>
-                <td>0.42 ± 0.01</td>
+                <td>0.140 ± 0.001</td>
+                <td>0.732 ± 0.001</td>
+                <td>0.415 ± 0.005</td>
               </tr>
               <tr>
-                <td>C2</td>
-                <td>PAV calibration</td>
-                <td>1.00</td>
+                <td>PAV / Isotonic</td>
+                <td>Single score</td>
+                <td>1.000 ± 0.000</td>
                 <td>3.60 ± 0.04%</td>
-                <td>0.14 ± 0.00</td>
-                <td>0.97 ± 0.00</td>
-                <td>0.38 ± 0.01</td>
+                <td>0.141 ± 0.001</td>
+                <td>0.968 ± 0.000</td>
+                <td>0.377 ± 0.009</td>
               </tr>
               <tr>
-                <td>C3</td>
+                <td>QMF Calibration</td>
                 <td>Score + QMF</td>
-                <td>1.00</td>
+                <td>1.000 ± 0.000</td>
                 <td>3.58 ± 0.04%</td>
-                <td>0.14 ± 0.00</td>
-                <td>1.00 ± 0.00</td>
-                <td>0.37 ± 0.01</td>
+                <td>0.142 ± 0.001</td>
+                <td>1.000 ± 0.000</td>
+                <td>0.539 ± 0.006</td>
               </tr>
               <tr>
-                <td>C4</td>
+                <td>Language Calibration</td>
                 <td>Score + language</td>
-                <td>1.00</td>
+                <td>1.000 ± 0.000</td>
                 <td>3.52 ± 0.04%</td>
-                <td>0.14 ± 0.00</td>
-                <td>0.77 ± 0.01</td>
-                <td>0.35 ± 0.01</td>
+                <td>0.140 ± 0.001</td>
+                <td>0.771 ± 0.014</td>
+                <td>0.547 ± 0.006</td>
               </tr>
               <tr>
-                <td>C5</td>
+                <td>Reliability Calibration</td>
                 <td>Score + reliability</td>
-                <td>0.88</td>
-                <td>3.84 ± 0.04%</td>
-                <td>0.15 ± 0.00</td>
-                <td>0.99 ± 0.00</td>
-                <td>0.35 ± 0.01</td>
+                <td>0.880 ± 0.001</td>
+                <td>3.86 ± 0.04%</td>
+                <td>0.151 ± 0.001</td>
+                <td>0.959 ± 0.001</td>
+                <td>0.482 ± 0.006</td>
               </tr>
               <tr class="group-start">
-                <td>C8-2</td>
-                <td>Multi-score</td>
-                <td>1.00</td>
-                <td>2.13 ± 0.03%</td>
-                <td>0.09</td>
-                <td>0.61</td>
-                <td>0.37</td>
+                <td>MultiScore-FC</td>
+                <td>Score vector</td>
+                <td>1.000 ± 0.000</td>
+                <td>2.15 ± 0.03%</td>
+                <td>0.087 ± 0.001</td>
+                <td>0.645 ± 0.053</td>
+                <td>0.377 ± 0.016</td>
               </tr>
               <tr>
-                <td>C8-3</td>
-                <td>Multi-score + abstention</td>
-                <td>0.81</td>
-                <td>0.21 ± 0.02%</td>
-                <td>0.02</td>
-                <td>0.59</td>
-                <td>0.21</td>
+                <td>MultiScore-ABS</td>
+                <td>Score vector + rejection</td>
+                <td>0.812 ± 0.001</td>
+                <td>0.22 ± 0.02%</td>
+                <td>0.016 ± 0.001</td>
+                <td>0.556 ± 0.066</td>
+                <td>0.218 ± 0.018</td>
               </tr>
               <tr class="highlight group-start">
-                <td>C10-2</td>
-                <td>Multi-score + metadata</td>
-                <td>1.00</td>
+                <td>AMEC-FC</td>
+                <td>Scores + metadata</td>
+                <td>1.000 ± 0.000</td>
                 <td>1.85 ± 0.03%</td>
-                <td>0.08 ± 0.00</td>
-                <td>0.47</td>
-                <td>0.28</td>
+                <td>0.075 ± 0.001</td>
+                <td>0.470 ± 0.023</td>
+                <td>0.283 ± 0.013</td>
               </tr>
               <tr class="highlight">
-                <td>C10-3</td>
-                <td>C10-2 + abstention</td>
-                <td>0.80</td>
+                <td>AMEC-ABS</td>
+                <td>AMEC-FC + rejection</td>
+                <td>0.798 ± 0.001</td>
                 <td>0.10 ± 0.01%</td>
-                <td>0.01 ± 0.00</td>
-                <td>0.33</td>
-                <td>0.10</td>
+                <td>0.009 ± 0.001</td>
+                <td>0.334 ± 0.030</td>
+                <td>0.097 ± 0.013</td>
               </tr>
             </tbody>
           </table>
@@ -706,24 +706,52 @@
         </p>
 
         <div class="external-results">
+          <h3>Matched metadata controls</h3>
+          <p class="note">
+            The strict score-only control keeps the same 10 input slots,
+            112 expanded features, 3,433 parameters, and training protocol as AMEC-FC.
+          </p>
+          <div class="stats external-stats" aria-label="Metadata controls">
+            <article class="stat">
+              <small>Strict matched score-only</small>
+              <strong>2.134% / 0.0862</strong>
+              <small>EER / Cllr with constant metadata slots</small>
+            </article>
+            <article class="stat">
+              <small>Metadata permutation</small>
+              <strong>2.120% / 0.0859</strong>
+              <small>EER / Cllr with shuffled context</small>
+            </article>
+            <article class="stat">
+              <small>Metadata only</small>
+              <strong>45.974% / 0.9910</strong>
+              <small>EER / Cllr without speaker scores</small>
+            </article>
+          </div>
+        </div>
+
+        <div class="external-results">
           <h3>External-system results</h3>
-          <p class="note">The same calibration back end improves both external systems and their score fusion.</p>
+          <p class="note">
+            Source-specific score-only and score-plus-metadata heads are evaluated
+            for Official, LI-MSV, and their dual-score fusion.
+          </p>
 
           <div class="stats external-stats" aria-label="External-system results">
             <article class="stat">
               <small>Official TidyVoice EER</small>
-              <strong>3.155% → 2.416%</strong>
+              <strong>3.1546% → 2.4206%</strong>
               <small>Raw score to metadata-aware calibration</small>
             </article>
             <article class="stat">
               <small>LI-MSV EER</small>
-              <strong>0.640% → 0.433%</strong>
+              <strong>0.6403% → 0.4309%</strong>
               <small>Raw score to metadata-aware calibration</small>
             </article>
             <article class="stat">
               <small>Dual-score fusion</small>
-              <strong>0.427% → 0.038%</strong>
-              <small>Full coverage to accepted set at 0.794 coverage</small>
+              <strong>0.4246% → 0.0311%</strong>
+              <small>Full coverage to accepted set at 0.7942 coverage</small>
             </article>
           </div>
         </div>
@@ -735,10 +763,18 @@
         <div class="section-head">
           <h2>Selective and side analysis</h2>
           <p>
-            The repository includes coverage-aware evaluation, a separate multi-enrollment
-            side validation, and confidence-based abstention analysis.
+            Coverage-risk AUC, class-specific rejection rates, condition-stratified
+            checks, and speaker-clustered bootstrap analyses accompany the selected
+            operating points.
           </p>
         </div>
+
+        <p class="fixed-note">
+          <strong>Selective-result check:</strong> at the nominal 0.80 operating
+          point, AMEC-ABS rejects 20.42% of target and 19.54% of non-target trials;
+          MultiScore-ABS rejects 19.25% and 17.87%. The accepted-set gain is not
+          produced by rejecting only one class.
+        </p>
 
         <div class="chart-grid">
           <article class="chart-card">
@@ -751,11 +787,11 @@
           </article>
 
           <article class="chart-card">
-            <img src="pages/c10_coverage_curve.png" alt="Coverage-aware C10 curve showing covered accuracy, accepted EER, and accepted Cllr">
+            <img src="pages/amec_multiscore_coverage.png" alt="MultiScore-ABS and AMEC-ABS coverage-risk curves for accepted EER and Cllr">
             <div class="body">
-              <h3>Coverage-aware abstention</h3>
-              <p class="note">Lower coverage retains higher-confidence trials and reduces accepted-set error.</p>
-              <a href="pages/c10_coverage_curve.png">Open figure</a>
+              <h3>AMEC-ABS coverage-risk</h3>
+              <p class="note">EER AURC improves from 0.3175 to 0.2191 relative to MultiScore-ABS.</p>
+              <a href="pages/amec_multiscore_coverage.png">Open figure</a>
             </div>
           </article>
 
@@ -776,9 +812,10 @@
         <div class="section-head">
           <h2>Reproducible code</h2>
           <p>
-            Source code covers C0–C5, C8, C9, C10, feature ablations, metadata controls,
-            coverage curves, external baselines, and similarity-fusion checks. Dataset
-            files and pretrained checkpoints are intentionally excluded.
+            Source code covers single-score baselines, MultiScore and AMEC variants,
+            strict matched controls, ablations, coverage-risk analysis, external
+            score-only and score-plus-metadata heads, and similarity-fusion checks.
+            Dataset files and pretrained checkpoints are intentionally excluded.
           </p>
         </div>
 

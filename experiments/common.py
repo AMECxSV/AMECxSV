@@ -24,7 +24,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 INPUT_TABLE = Path(
     os.environ.get(
         "AMECXSV_INPUT_TABLE",
-        PROJECT_ROOT / "data" / "tidyvoice_trials.parquet",
+        PROJECT_ROOT / "dataset" / "tidyvoice_trials.parquet",
     )
 )
 DATASET_NAME = os.environ.get("AMECXSV_DATASET_NAME", "tidyvoice")

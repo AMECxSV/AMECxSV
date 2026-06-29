@@ -40,7 +40,7 @@ from common import (
 DEFAULT_INPUT = Path(
     os.environ.get(
         "AMECXSV_SIMILARITY_TABLE",
-        PROJECT_ROOT / "data" / "tidyvoice_similarity_scores.parquet",
+        PROJECT_ROOT / "dataset" / "tidyvoice_similarity_scores.parquet",
     )
 )
 OUTPUT_CSV = BASELINE_DIR / "tidyvoice_c12_mlp_results.csv"

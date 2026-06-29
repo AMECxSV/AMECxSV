@@ -23,6 +23,7 @@ TASKS = {
     "c8_coverage": EXPERIMENTS / "c8_coverage_curve.py",
     "c10_coverage": EXPERIMENTS / "c10_coverage_curve.py",
     "metadata_controls": EXPERIMENTS / "c10_metadata_controls.py",
+    "matched_score_control": EXPERIMENTS / "c14_matched_score_only.py",
     "condition_analysis": EXPERIMENTS / "c13.py",
     "similarity_fusion": EXPERIMENTS / "c12.py",
 }
@@ -43,6 +44,7 @@ FOLLOWUP_TASKS = (
     "c8_coverage",
     "c10_coverage",
     "metadata_controls",
+    "matched_score_control",
     "condition_analysis",
 )
 
@@ -51,7 +53,12 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Run AMECxSV paper experiments."
     )
-    parser.add_argument("tasks", nargs="*", choices=sorted(TASKS))
+    parser.add_argument(
+        "tasks",
+        nargs="*",
+        metavar="TASK",
+        help="Experiment task name; use --list to show valid names.",
+    )
     parser.add_argument(
         "--main",
         action="store_true",
@@ -60,12 +67,23 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--followup",
         action="store_true",
-        help="Run coverage, metadata-control, and condition analyses.",
+        help=(
+            "Run coverage, strict matched score-only, metadata-control, "
+            "and condition analyses."
+        ),
     )
     parser.add_argument(
         "--list", action="store_true", help="List task names and exit."
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    unknown = sorted(set(args.tasks) - set(TASKS))
+    if unknown:
+        parser.error(
+            "unknown task(s): "
+            + ", ".join(unknown)
+            + "; use --list to show valid names"
+        )
+    return args
 
 
 def main() -> None:

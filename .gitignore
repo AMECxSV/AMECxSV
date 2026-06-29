@@ -1,6 +1,8 @@
 # Data and generated artifacts
 data/
 datasets/
+dataset/*
+!dataset/.gitkeep
 protocols/*.csv
 protocols/*.csv.gz
 outputs/

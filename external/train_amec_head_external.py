@@ -84,6 +84,15 @@ def parse_args(argv: Iterable[str] | None = None) -> argparse.Namespace:
         help="Test score table. Use name=path to set the score feature name. Can be repeated.",
     )
     parser.add_argument("--score-column", default="score")
+    parser.add_argument(
+        "--feature-set",
+        choices=("score_only", "score_plus_metadata"),
+        default="score_plus_metadata",
+        help=(
+            "Use only the supplied external score stream(s), or append "
+            "language-match and duration-reliability metadata."
+        ),
+    )
     parser.add_argument("--tag", help="Output tag. Defaults to joined score names.")
     parser.add_argument("--device", default="auto", choices=("auto", "cpu", "cuda", "mps"))
     parser.add_argument("--hidden-dim", type=int, default=DEFAULT_HIDDEN_DIM)
@@ -236,15 +245,22 @@ def same_language(frame: pd.DataFrame) -> np.ndarray:
     raise ValueError("Score table must contain language_condition or enroll/test_language")
 
 
-def feature_frame(frame: pd.DataFrame, score_names: list[str]) -> pd.DataFrame:
+def feature_frame(
+    frame: pd.DataFrame,
+    score_names: list[str],
+    feature_set: str,
+) -> pd.DataFrame:
     parts: dict[str, np.ndarray] = {}
     for name in score_names:
         column = f"score_{name}"
         parts[column] = pd.to_numeric(frame[column], errors="coerce").to_numpy(dtype=np.float64)
-    duration = duration_features(frame)
-    for column in duration.columns:
-        parts[column] = duration[column].to_numpy(dtype=np.float64)
-    parts["same_language"] = same_language(frame)
+    if feature_set == "score_plus_metadata":
+        duration = duration_features(frame)
+        for column in duration.columns:
+            parts[column] = duration[column].to_numpy(dtype=np.float64)
+        parts["same_language"] = same_language(frame)
+    elif feature_set != "score_only":
+        raise ValueError(f"Unknown feature set: {feature_set}")
     features = pd.DataFrame(parts, index=frame.index)
     finite = np.isfinite(features.to_numpy(dtype=np.float64, copy=False))
     if not np.all(finite):
@@ -410,6 +426,7 @@ def reject_summary_rows(
     decisions: np.ndarray,
     *,
     tag: str,
+    input_feature_set: str,
     run_id: str,
     coverage_target: float,
     confidence_threshold: float,
@@ -422,8 +439,9 @@ def reject_summary_rows(
         "git_commit": git_commit(),
         "dataset": first_value(frame, "dataset"),
         "split": first_value(frame, "split"),
-        "score_kind": "amec_mlp_conf_reject",
+        "score_kind": f"amec_mlp_{input_feature_set}_conf_reject",
         "feature_set": tag,
+        "input_feature_set": input_feature_set,
         "coverage_target": coverage_target,
         "confidence_threshold": confidence_threshold,
     }
@@ -535,13 +553,28 @@ def main(argv: Iterable[str] | None = None) -> int:
         validate_score_sets(calibration_names, validation_names)
     test, test_names = load_joined_scores(args.test_score, args.score_column)
     validate_score_sets(calibration_names, test_names)
-    tag = safe_name(args.tag or "_plus_".join(calibration_names))
+    default_tag = "_plus_".join(calibration_names)
+    tag = safe_name(
+        args.tag or f"{default_tag}_{args.feature_set}"
+    )
 
-    x_train_frame = feature_frame(calibration, calibration_names)
+    x_train_frame = feature_frame(
+        calibration,
+        calibration_names,
+        args.feature_set,
+    )
     x_validation_frame: pd.DataFrame | None = None
     if validation is not None:
-        x_validation_frame = feature_frame(validation, calibration_names)
-    x_test_frame = feature_frame(test, calibration_names)
+        x_validation_frame = feature_frame(
+            validation,
+            calibration_names,
+            args.feature_set,
+        )
+    x_test_frame = feature_frame(
+        test,
+        calibration_names,
+        args.feature_set,
+    )
     if x_train_frame.columns.tolist() != x_test_frame.columns.tolist():
         raise ValueError("Calibration/test feature columns differ")
     if x_validation_frame is not None and x_train_frame.columns.tolist() != x_validation_frame.columns.tolist():
@@ -641,11 +674,12 @@ def main(argv: Iterable[str] | None = None) -> int:
             llr_column="calibrated_score",
             source_system=SOURCE_SYSTEM,
             run_id=run_id,
-            score_kind="amec_mlp_full_coverage",
+            score_kind=f"amec_mlp_{args.feature_set}_full_coverage",
             include_breakdowns=True,
         )
         for row in full_rows:
             row["feature_set"] = tag
+            row["input_feature_set"] = args.feature_set
         metrics_rows.extend(full_rows)
         if frame_decisions is not None:
             frame_labels = y_validation if split_name == "validation" and y_validation is not None else y_test
@@ -655,6 +689,7 @@ def main(argv: Iterable[str] | None = None) -> int:
                 llrs,
                 frame_decisions,
                 tag=tag,
+                input_feature_set=args.feature_set,
                 run_id=run_id,
                 coverage_target=args.coverage_target,
                 confidence_threshold=reject_threshold,
@@ -688,6 +723,7 @@ def main(argv: Iterable[str] | None = None) -> int:
         {
             "source_system": SOURCE_SYSTEM,
             "feature_set": tag,
+            "input_feature_set": args.feature_set,
             "score_names": calibration_names,
             "feature_columns": x_train_frame.columns.tolist(),
             "run_id": run_id,
@@ -718,6 +754,7 @@ def main(argv: Iterable[str] | None = None) -> int:
         {
             "source_system": SOURCE_SYSTEM,
             "feature_set": tag,
+            "input_feature_set": args.feature_set,
             "score_names": calibration_names,
             "feature_columns": x_train_frame.columns.tolist(),
             "run_id": run_id,

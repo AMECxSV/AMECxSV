@@ -82,9 +82,34 @@ class RichFeatureMlpCalibrator:
         ).reshape(features.shape[0], -1)
 
         adjacent_gaps = sorted_scores[:, :-1] - sorted_scores[:, 1:]
-        score_median = np.median(scores, axis=1, keepdims=True)
-        score_q25 = np.quantile(scores, 0.25, axis=1, keepdims=True)
-        score_q75 = np.quantile(scores, 0.75, axis=1, keepdims=True)
+
+        def linear_quantile_from_descending(q: float) -> np.ndarray:
+            position = (self.num_scores - 1) * q
+            lower = int(math.floor(position))
+            upper = int(math.ceil(position))
+            weight = position - lower
+            lower_desc = self.num_scores - 1 - lower
+            upper_desc = self.num_scores - 1 - upper
+            lower_value = sorted_scores[:, lower_desc : lower_desc + 1]
+            if lower == upper:
+                return lower_value
+            upper_value = sorted_scores[:, upper_desc : upper_desc + 1]
+            difference = upper_value - lower_value
+            if weight >= 0.5:
+                return upper_value - difference * (1.0 - weight)
+            return lower_value + difference * weight
+
+        middle = self.num_scores // 2
+        if self.num_scores % 2:
+            score_median = sorted_scores[:, middle : middle + 1]
+        else:
+            score_median = np.mean(
+                sorted_scores[:, middle - 1 : middle + 1],
+                axis=1,
+                keepdims=True,
+            )
+        score_q25 = linear_quantile_from_descending(0.25)
+        score_q75 = linear_quantile_from_descending(0.75)
         pairwise_diffs = []
         pairwise_abs_diffs = []
         pairwise_products = []
