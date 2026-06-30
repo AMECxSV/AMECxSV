@@ -1,18 +1,22 @@
 # AMECxSV
 
-Metadata-aware score calibration, fusion, and selective abstention for
-cross-lingual automatic speaker verification.
+Adaptive metadata-driven embedding-fusion calibration for X-lingual speaker
+verification.
 
 [Project website](https://amecxsv.github.io/AMECxSV/) |
 [Dataset](https://huggingface.co/datasets/AMECxSV/AMECxSV)
 
-All speaker encoders are frozen, and absolute score performance remains
-encoder-dependent. AMECxSV studies calibration and fusion of fixed encoder
-scores; it does not introduce a new encoder or claim the highest raw ASV score.
+All speaker encoders are frozen. AMECxSV studies calibration and fusion of
+fixed encoder scores, not representation learning or encoder ranking.
 
 The repository includes single-score baselines, MultiScore-FC/ABS controls,
 AMEC-FC/ABS, strict architecture-matched score-only and metadata controls,
-speaker-clustered bootstrap analysis, and external fixed-score experiments.
+linear controls, predicted-language controls, speaker-clustered bootstrap
+analysis, and external fixed-score experiments.
+
+Results use a deterministic speaker-disjoint held-out partition derived from
+the TidyVoiceX-ASV development protocol. They are metadata-available results,
+not language-blind scoring on the official evaluation set.
 
 ## Structure
 
@@ -45,10 +49,20 @@ python run.py --list
 python run.py --main
 python run.py --followup
 python run.py matched_score_control
-python run.py c9
+python run.py linear_controls
+python experiments/predicted_language_control.py --help
 ```
 
-External heads support matched score-only and score-plus-metadata inputs:
+The predicted-language control first requires utterance-level language
+predictions from a frozen LID model:
+
+```bash
+pip install -r requirements-embeddings.txt
+python data_prep/predict_voxlingua_languages.py --help
+```
+
+External systems are retrained independently on each source calibration split
+and support matched score-only and score-plus-metadata inputs:
 
 ```bash
 python external/train_amec_head_external.py ... --feature-set score_only

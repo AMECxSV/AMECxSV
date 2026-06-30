@@ -25,6 +25,8 @@ TASKS = {
     "metadata_controls": EXPERIMENTS / "c10_metadata_controls.py",
     "matched_score_control": EXPERIMENTS / "c14_matched_score_only.py",
     "condition_analysis": EXPERIMENTS / "c13.py",
+    "linear_controls": EXPERIMENTS / "linear_controls.py",
+    "predicted_language": EXPERIMENTS / "predicted_language_control.py",
     "similarity_fusion": EXPERIMENTS / "c12.py",
 }
 
